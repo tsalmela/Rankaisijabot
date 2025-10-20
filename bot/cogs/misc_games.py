@@ -22,6 +22,10 @@ class Misc_games(commands.Cog, name="misc_games"):
     async def darktide(self, ctx):
         await ctx.send(file=discord.File("images/darktide.png"))
 
+    @commands.command(name="fellowship")
+    async def fellowship(self, ctx):
+        await ctx.send(file=discord.File("images/fellowship.png"))
+
 
 async def setup(bot):
     await bot.add_cog(Misc_games(bot))
