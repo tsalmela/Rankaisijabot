@@ -11,3 +11,6 @@ black>=23.0.0
 
 # For stock command testing
 yfinance
+
+# For Docker container testing
+docker>=6.0.0
