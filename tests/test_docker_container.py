@@ -179,18 +179,18 @@ def test_python_version_correct(docker_client, built_image):
         command=["python3", "--version"],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
-        remove=True
+        remove=False  # Don't auto-remove so we can get logs
     )
 
-    time.sleep(2)
-
     try:
+        # Wait for container to finish
+        result = container.wait(timeout=10)
         logs = container.logs().decode('utf-8')
         assert "Python 3.9" in logs
         print(f"✓ Python version: {logs.strip()}")
     finally:
         try:
-            container.stop(timeout=1)
+            container.remove(force=True)
         except:
             pass
 
@@ -210,18 +210,17 @@ def test_bot_dependencies_installed(docker_client, built_image):
         command=["python3", "-c", "; ".join(test_imports)],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
-        remove=True
+        remove=False
     )
 
-    time.sleep(2)
-
     try:
+        result = container.wait(timeout=10)
         logs = container.logs().decode('utf-8')
         assert "All dependencies OK" in logs
         print("✓ All dependencies installed correctly")
     finally:
         try:
-            container.stop(timeout=1)
+            container.remove(force=True)
         except:
             pass
 
@@ -233,18 +232,17 @@ def test_bot_module_imports(docker_client, built_image):
         command=["python3", "-c", "from bot.rankaisija import Rankaisija; print('Bot module OK')"],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
-        remove=True
+        remove=False
     )
 
-    time.sleep(2)
-
     try:
+        result = container.wait(timeout=10)
         logs = container.logs().decode('utf-8')
         assert "Bot module OK" in logs
         print("✓ Bot module imports successfully")
     finally:
         try:
-            container.stop(timeout=1)
+            container.remove(force=True)
         except:
             pass
 
@@ -259,18 +257,17 @@ def test_config_file_exists(docker_client, built_image):
         ],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
-        remove=True
+        remove=False
     )
 
-    time.sleep(2)
-
     try:
+        result = container.wait(timeout=10)
         logs = container.logs().decode('utf-8')
         assert "Config OK" in logs
         print("✓ Config file present in container")
     finally:
         try:
-            container.stop(timeout=1)
+            container.remove(force=True)
         except:
             pass
 
@@ -298,19 +295,18 @@ print('All cogs OK')
         command=["python3", "-c", test_code],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
-        remove=True
+        remove=False
     )
 
-    time.sleep(3)
-
     try:
+        result = container.wait(timeout=15)
         logs = container.logs().decode('utf-8')
         print(f"\n{logs}")
         assert "All cogs OK" in logs
         print("✓ All cogs are loadable")
     finally:
         try:
-            container.stop(timeout=1)
+            container.remove(force=True)
         except:
             pass
 
@@ -322,18 +318,17 @@ def test_workdir_is_correct(docker_client, built_image):
         command=["python3", "-c", "import os; print(os.getcwd())"],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
-        remove=True
+        remove=False
     )
 
-    time.sleep(2)
-
     try:
+        result = container.wait(timeout=10)
         logs = container.logs().decode('utf-8').strip()
         assert logs == "/bot"
         print(f"✓ Working directory: {logs}")
     finally:
         try:
-            container.stop(timeout=1)
+            container.remove(force=True)
         except:
             pass
 
@@ -350,18 +345,17 @@ def test_bot_token_env_var(docker_client, built_image):
         ],
         environment={"BOT_TOKEN": "test_token_123"},
         detach=True,
-        remove=True
+        remove=False
     )
 
-    time.sleep(2)
-
     try:
+        result = container.wait(timeout=10)
         logs = container.logs().decode('utf-8')
         assert "Token env var OK" in logs
         print("✓ BOT_TOKEN environment variable accessible")
     finally:
         try:
-            container.stop(timeout=1)
+            container.remove(force=True)
         except:
             pass
 
@@ -377,18 +371,16 @@ def test_container_starts_without_immediate_crash(docker_client, built_image):
         command=["python3", "-c", "import bot; print('Import successful')"],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
-        remove=True
+        remove=False
     )
 
-    time.sleep(2)
-
     try:
-        container.reload()
+        result = container.wait(timeout=10)
         logs = container.logs().decode('utf-8')
         assert "Import successful" in logs
         print("✓ Container starts without immediate crash")
     finally:
         try:
-            container.stop(timeout=1)
+            container.remove(force=True)
         except:
             pass
