@@ -2,9 +2,11 @@
     Loads bot configuration from YAML files.
 """
 
+
+from __future__ import annotations
+
 import logging
 import os
-from collections.abc import Mapping
 from typing import List
 
 import yaml
