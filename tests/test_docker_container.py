@@ -176,7 +176,7 @@ def test_python_version_correct(docker_client, built_image):
     """Test that the correct Python version is installed."""
     container = docker_client.containers.run(
         built_image.id,
-        command=["python3", "--version"],
+        command=["--version"],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
         remove=False  # Don't auto-remove so we can get logs
@@ -207,7 +207,7 @@ def test_bot_dependencies_installed(docker_client, built_image):
 
     container = docker_client.containers.run(
         built_image.id,
-        command=["python3", "-c", "; ".join(test_imports)],
+        command=["-c", "; ".join(test_imports)],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
         remove=False
@@ -229,7 +229,7 @@ def test_bot_module_imports(docker_client, built_image):
     """Test that the bot module can be imported without errors."""
     container = docker_client.containers.run(
         built_image.id,
-        command=["python3", "-c", "from bot.rankaisija import Rankaisija; print('Bot module OK')"],
+        command=["-c", "from bot.rankaisija import Rankaisija; print('Bot module OK')"],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
         remove=False
@@ -252,7 +252,7 @@ def test_config_file_exists(docker_client, built_image):
     container = docker_client.containers.run(
         built_image.id,
         command=[
-            "python3", "-c",
+            "-c",
             "import os; assert os.path.exists('/bot/config.yml'), 'Config not found'; print('Config OK')"
         ],
         environment={"BOT_TOKEN": "test_token"},
@@ -292,7 +292,7 @@ print('All cogs OK')
 
     container = docker_client.containers.run(
         built_image.id,
-        command=["python3", "-c", test_code],
+        command=["-c", test_code],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
         remove=False
@@ -315,7 +315,7 @@ def test_workdir_is_correct(docker_client, built_image):
     """Test that the working directory is set correctly."""
     container = docker_client.containers.run(
         built_image.id,
-        command=["python3", "-c", "import os; print(os.getcwd())"],
+        command=["-c", "import os; print(os.getcwd())"],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
         remove=False
@@ -338,7 +338,7 @@ def test_bot_token_env_var(docker_client, built_image):
     container = docker_client.containers.run(
         built_image.id,
         command=[
-            "python3", "-c",
+            "-c",
             "import os; token = os.getenv('BOT_TOKEN'); "
             "assert token == 'test_token_123', f'Token is {token}'; "
             "print('Token env var OK')"
@@ -368,7 +368,7 @@ def test_container_starts_without_immediate_crash(docker_client, built_image):
     """
     container = docker_client.containers.run(
         built_image.id,
-        command=["python3", "-c", "import bot; print('Import successful')"],
+        command=["-c", "import bot; print('Import successful')"],
         environment={"BOT_TOKEN": "test_token"},
         detach=True,
         remove=False
