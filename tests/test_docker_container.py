@@ -275,7 +275,26 @@ def test_config_file_exists(docker_client, built_image):
 def test_all_cogs_loadable(docker_client, built_image):
     """Test that all cogs defined in config can be loaded."""
     test_code = """
+import os
 import yaml
+
+# Register the !ENV constructor to handle environment variables in YAML
+def _env_var_constructor(loader, node):
+    default = None
+    if node.id == "scalar":
+        value = loader.construct_scalar(node)
+        key = str(value)
+    else:
+        value = loader.construct_sequence(node)
+        if len(value) >= 2:
+            default = value[1]
+            key = value[0]
+        else:
+            key = value[0]
+    return os.getenv(key, default)
+
+yaml.SafeLoader.add_constructor("!ENV", _env_var_constructor)
+
 with open('/bot/config.yml') as f:
     config = yaml.safe_load(f)
     cogs = config['cogs']['cogs']
