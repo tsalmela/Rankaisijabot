@@ -10,20 +10,21 @@ class Wow(commands.Cog, name="wow"):
 
     @commands.command(name="wowia", aliases=["wow"])
     async def wowia(self, ctx):
+        zi = ZoneInfo("Europe/Helsinki")
         # WoW Forever launch: 5.11.2026 at 02:00 Finnish time
         launch_time = datetime(
             2026, 11, 5, 2, 0, 0,
-            tzinfo=ZoneInfo("Europe/Helsinki")
+            tzinfo=zi
         )
 
-        now = datetime.now(ZoneInfo("Europe/Helsinki"))
+        now = datetime.now(zi)
 
         if now >= launch_time:
+            await ctx.send(file=discord.File("images/tauren_hepu.png"))
             await ctx.send(
                 "🌿🐂 **A young tauren druid sits beneath the trees, "
                 "patiently awaiting his destiny.**"
             )
-            await ctx.send(file=discord.File("images/tauren_hepu.png"))
 
         else:
             remaining = launch_time - now
